@@ -35,6 +35,16 @@ cp .env.example .env
 docker compose up -d
 ```
 
+## 部署
+
+服务器已配置 git 自动部署：
+
+```bash
+bash deploy.sh
+```
+
+流程：`git fetch` → `reset --hard` → `py_compile` 语法检查（失败自动回滚）→ 重启容器 → 健康检查。
+
 ## 目录结构
 
 ```
@@ -60,16 +70,55 @@ app/
   persona/           人设文件
 web/
   index.html         网页聊天界面
+deploy.sh            服务器一键部署
 ```
 
-## 素材说明
+## 致谢 / Credits
 
-鲸鱼娘动画和表情包来自 [dsh-pet-indesktop](https://github.com/MerZlin/dsh-pet-indesktop)，用 `_tools/build_assets.py` 从 WebM 转成 GIF。因体积较大（23MB）不入库，需要时自行生成：
+本项目整合了以下开源项目的成果，在此致谢：
 
-```bash
-git clone https://github.com/MerZlin/dsh-pet-indesktop /tmp/pet-src
-python3 _tools/build_assets.py
-```
+### 角色素材与桌宠
+
+- **[dsh-pet-indesktop](https://github.com/MerZlin/dsh-pet-indesktop)** by [MerZlin](https://github.com/MerZlin)
+  - 提供「鲸鱼娘·大肥鱼」角色形象、106 段动画、24 张表情包
+  - 本项目用 `_tools/build_assets.py` 把 WebM 动画转成 GIF 供 QQ / 网页使用
+  - 桌宠端的事件桥接设计（`dsh-pet-bridge`）也启发了本项目的状态联动思路
+
+### 协议与 QQ 接入
+
+- **[NapCatQQ](https://github.com/NapNeko/NapCatQQ)** by NapNeko
+  - 基于 NTQQ 的现代协议端，提供 OneBot v11 接口
+- **[OneBot v11](https://github.com/botuniverse/onebot-11)** by Bot Universe
+  - QQ 机器人统一协议标准
+
+### 设计参考
+
+- **[AstrBot](https://github.com/AstrBotDevs/AstrBot)** by AstrBotDevs（42k+ stars）
+  - 提示词设计哲学：人设只写「你是谁」，不写「你该怎么说话」，把表达交给模型
+  - 多平台 IM 适配的工程结构参考
+- **[LangBot](https://github.com/langbot-app/LangBot)** by LangBot
+  - Agent 型 IM 机器人的生产级架构参考
+
+### 模型与语音
+
+- **[DeepSeek-V4.1-Flash](https://deepseek.com)** — 对话与多模态理解（经 SiliconFlow API）
+- **[edge-tts](https://github.com/rany2/edge-tts)** by rany2
+  - 微软 Edge 免费语音合成，提供 6 种中文女声
+- **[CosyVoice2](https://github.com/FunAudioLLM/CosyVoice)** by FunAudioLLM
+  - 硅基流动托管的语音合成（付费兜底方案）
+
+### 开发工具
+
+- **[DeepSeek Harness](https://github.com/deepseek-ai)** — 本项目的开发与调试环境
+
+## 作者
+
+- **Ralvmg** — 项目发起与需求设计
+  - GitHub: [@Ralvmg](https://github.com/Ralvmg)
+
+- **DeepSeek Harness（AI Agent）** — 代码实现与架构设计
+  - 本项目在 DeepSeek Harness 环境中由 AI Agent 协作完成
+  - 涵盖：后端架构、记忆系统、工具系统、网页前端、语音接入、部署脚本
 
 ## License
 
