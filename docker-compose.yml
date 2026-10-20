@@ -1,0 +1,70 @@
+# QQChat —— QQ 聊天机器人
+#
+# 架构：
+#   napcat: NTQQ 协议端，负责 QQ 登录与消息收发
+#   app:    机器人应用，负责 LLM 对话与记忆管理
+#
+# 常用命令：
+#   docker compose up -d          启动全部
+#   docker compose logs -f app    看机器人日志
+#   docker compose restart app    重启机器人（改了代码后）
+#   docker compose down           停止
+
+services:
+  napcat:
+    image: mlikiowa/napcat-docker:latest
+    container_name: qqchat-napcat
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3001"   # OneBot WS（仅本机；容器间走内网 172.18.x.x）
+      - "127.0.0.1:6099:6099"   # WebUI（仅本机，通过 SSH 隧道访问）
+    environment:
+      - NAPCAT_WEBUI_TOKEN=${NAPCAT_WEBUI_TOKEN:-qqchat_webui}
+    volumes:
+      - ./napcat/config:/app/napcat/config
+      - ./data/napcat:/app/napcat/data
+      - ./logs/napcat:/app/napcat/logs
+    mem_limit: 420m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: qqchat-app
+    restart: unless-stopped
+    depends_on:
+      - napcat
+    ports:
+      - "127.0.0.1:8080:8080"   # Web 聊天 API（仅本机，nginx 反代）
+    environment:
+      - TZ=Asia/Shanghai
+      - DATA_DIR=/app/data
+      - LOG_DIR=/app/logs
+      - DB_PATH=/app/data/qqchat.db
+      - PERSONA_DIR=/app/app/persona/builtin
+      - USER_PERSONA_DIR=/app/data/personas
+      - ONEBOT_WS_URL=ws://napcat:3001
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com/v1}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-chat}
+      - PERSONA=${PERSONA:-whale-musume}
+      - GROUP_TRIGGERS=${GROUP_TRIGGERS:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./app:/app/app          # 代码挂载：改代码后 restart 即可，不用 rebuild
+      - ./data:/app/data
+      - ./logs/app:/app/logs
+      - ./assets:/app/assets    # 鲸鱼娘动画+表情包
+      # 只读共享 NapCat 的 QQ 数据（图片/表情文件），用于本地兜底读取
+      - /var/lib/docker/volumes/d965a9f59079e278bcd9cf483121524c0b9e6a963e6c0cbe849cbb327d187610/_data:/app/qqcfg:ro
+    mem_limit: 300m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "2"

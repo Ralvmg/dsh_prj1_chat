@@ -1,0 +1,46 @@
+# ===== 素材（23MB，从 dsh-pet-indesktop 转换而来，不入库）=====
+assets/animations/
+assets/stickers/
+
+# ===== 敏感信息 =====
+.env
+.env.local
+*.key
+*.pem
+secret*
+
+# ===== 运行时数据 =====
+data/
+logs/
+*.db
+*.db-wal
+*.db-shm
+*.log
+
+# ===== QQ / NapCat 登录态 =====
+napcat/config/
+napcat/cache/
+qqcfg/
+qrcode.png
+qr-*.png
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ===== 传输/调试临时文件 =====
+*.b64
+*.tar.gz
+_push_url.txt
+_rest.txt
+tools_b64.txt
+
+# ===== 编辑器 / 系统 =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
