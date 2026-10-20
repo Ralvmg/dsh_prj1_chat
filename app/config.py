@@ -48,7 +48,7 @@ class Config:
     LLM_TIMEOUT = _env_int("LLM_TIMEOUT", 60)
 
     # ---------- 人设 ----------
-    PERSONA = _env("PERSONA", "whale-musume")
+    PERSONA = _env("PERSONA", "dafeiyu")
     PERSONA_DIR = _env("PERSONA_DIR", "/app/persona/builtin")
     USER_PERSONA_DIR = _env("USER_PERSONA_DIR", "/app/data/personas")
     BOT_NAME = _env("BOT_NAME", "")
@@ -143,3 +143,4 @@ class Config:
 
 
 config = Config()
+

@@ -262,6 +262,24 @@ class WebChatServer:
 
             def do_GET(self):
                 u = urlparse(self.path)
+
+                # ---------- 项目信息（对外入口）----------
+                if u.path in ("/api/chat", "/api/chat/"):
+                    return self._json(200, {
+                        "ok": True,
+                        "project": "鲸鱼娘 Chat",
+                        "description": "会聊天、有记忆、能看图的 AI 角色机器人",
+                        "repo": "https://github.com/Ralvmg/dsh_prj1_chat",
+                        "endpoints": {
+                            "health": "GET  /api/chat/health",
+                            "personas": "GET  /api/chat/personas",
+                            "history": "GET  /api/chat/history?session_id=xxx",
+                            "send": "POST /api/chat/send",
+                            "switch_persona": "POST /api/chat/persona",
+                        },
+                        "credits": "dsh-pet-indesktop / NapCatQQ / AstrBot / edge-tts",
+                    })
+
                 if u.path == "/api/chat/health":
                     return self._json(200, {
                         "ok": True,
@@ -271,11 +289,15 @@ class WebChatServer:
                     })
                 if u.path == "/api/chat/personas":
                     all_p = srv.persona_manager.list_all()
+                    cur_key = srv.persona_manager.current_key if hasattr(
+                        srv.persona_manager, "current_key") else ""
                     return self._json(200, {
                         "ok": True,
                         "current": srv.persona_manager.current.name if srv.persona_manager.current else "",
+                        "current_key": cur_key,
                         "personas": [
-                            {"key": k, "name": v["name"], "avatar": v.get("avatar", "")}
+                            {"key": k, "name": v["name"], "avatar": v.get("avatar", ""),
+                             "description": v.get("description", "")}
                             for k, v in all_p.items()
                         ],
                     })

@@ -165,15 +165,15 @@ class MoodEngine:
     def persona_for_mood(self) -> str:
         """根据心情决定用哪个人格
 
-        - 生气/被惹 → 辣辣（毒舌）
-        - 困/无聊 → 软软（温柔）
-        - 元气/开心 → 大肥鱼（标准）
+        - 生气/被惹 → 哦鲸鲸（嘴硬带刺）
+        - 困/无聊   → 小鲸鲸（软糯安静）
+        - 高兴/元气 → 大肥鱼（话多爱笑）
         """
-        if self._mood == "annoyed":
-            return "tsundere"
+        if self._mood in ("annoyed", "angry", "insulted"):
+            return "ojingjing"
         if self._mood in ("sleepy", "bored"):
-            return "gentle"
-        return "whale-musume"
+            return "xiaojingjing"
+        return "dafeiyu"
 
     def should_initiate(self) -> bool:
         """当前状态是否适合主动找人说话"""

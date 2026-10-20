@@ -146,6 +146,7 @@ class PersonaManager:
         self.user_dir = Path(user_dir)
         self._cache: dict[str, Persona] = {}
         self._current: Optional[Persona] = None
+        self._current_key: str = ""
         self._baseline = self._load_baseline()
 
     def _load_baseline(self) -> str:
@@ -222,12 +223,18 @@ class PersonaManager:
             logger.error(f"人设不存在: {name}")
             return False
         self._current = self._compose(p)
+        self._current_key = name
         logger.info(f"已切换人设: {p.name} ({name})，叠加基线 {len(self._baseline)} 字")
         return True
 
     @property
     def current(self) -> Optional[Persona]:
         return self._current
+
+    @property
+    def current_key(self) -> str:
+        """当前人设的 key（文件名），用于前端高亮"""
+        return getattr(self, "_current_key", "")
 
     def reload(self):
         """清空缓存，重新加载"""

@@ -231,7 +231,7 @@ class MessageHandler:
             if "胖" in text and "大肥鱼" in text:
                 await self.mood.trigger("insulted")
 
-        # 心情自动切换人格（生气→辣辣，困/无聊→软软，其余→标准）
+        # 心情自动切换人格（生气→哦鲸鲸，困/无聊→小鲸鲸，其余→大肥鱼）
         persona = self.persona_manager.current
         if getattr(self, "mood", None) and config.MOOD_PERSONA_SWITCH:
             target = self.mood.persona_for_mood()
@@ -411,7 +411,7 @@ class MessageHandler:
                 "/reset 清空对话记忆\n"
                 "/profile 看用户画像\n"
                 "/persona 看当前人格\n"
-                "/persona set <名称> 切换人格（whale-musume/gentle/tsundere）\n"
+                "/persona set <名称> 切换人格（dafeiyu/xiaojingjing/ojingjing）\\n"
                 "/mood 看心情\n"
                 "/facts 看记住你哪些事\n"
                 "/check 自检运行状态\n"
@@ -491,3 +491,4 @@ class MessageHandler:
                 logger.info(f"已更新用户 {user_id} 画像")
         except Exception as e:
             logger.warning(f"更新画像失败: {e}")
+
