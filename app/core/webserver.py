@@ -267,6 +267,7 @@ class WebChatServer:
                         "ok": True,
                         "persona": srv.persona_manager.current.name if srv.persona_manager.current else "",
                         "mood": srv.mood.current if srv.mood else "",
+                        "version": "1.0.0",
                     })
                 if u.path == "/api/chat/personas":
                     all_p = srv.persona_manager.list_all()
@@ -336,3 +337,4 @@ class WebChatServer:
         srv = ThreadingHTTPServer((self.host, self.port), handler)
         logger.info(f"WebChat HTTP 服务启动: http://{self.host}:{self.port}")
         srv.serve_forever()
+
