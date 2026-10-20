@@ -284,6 +284,7 @@ class WebChatServer:
                     return self._json(200, {
                         "ok": True,
                         "persona": srv.persona_manager.current.name if srv.persona_manager.current else "",
+                        "persona_key": srv.persona_manager.current_key,
                         "mood": srv.mood.current if srv.mood else "",
                         "version": "1.0.0",
                     })

@@ -265,7 +265,7 @@
 
 <header>
   <a href="/" class="back-btn" title="返回首页">←</a>
-  <div class="avatar">🐋</div>
+  <img class="avatar" src="/avatars/dafeiyu.png" alt="鲸鱼娘" id="topAvatar">
   <div>
     <div class="title" id="botName">鲸鱼娘 · 大肥鱼</div>
     <div class="subtitle" id="botMood">正在连接…</div>
@@ -392,7 +392,7 @@ function showTyping() {
   wrap.id = 'typing';
   const av = document.createElement('div');
   av.className = 'mini-avatar';
-  av.textContent = '🐋';
+  av.innerHTML = '<img src="/avatars/dafeiyu.png" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
   const bubble = document.createElement('div');
   bubble.className = 'bubble typing';
   bubble.innerHTML = '<span></span><span></span><span></span>';
@@ -429,6 +429,11 @@ async function loadHealth() {
       $botName.textContent = d.persona || '鲸鱼娘';
       $botMood.textContent = d.mood ? '心情：' + d.mood : '在线';
       setStatus(true, '在线');
+      // 同步头像到当前人格
+      if (d.persona_key) {
+        const av = document.getElementById('topAvatar');
+        if (av) av.src = '/avatars/' + d.persona_key + '.png';
+      }
     } else {
       setStatus(false, '异常');
     }
@@ -449,7 +454,17 @@ async function loadPersonas() {
       // 按 key 高亮（比名字更可靠）
       const isActive = (d.current_key && p.key === d.current_key) || p.name === d.current;
       b.className = 'persona-btn' + (isActive ? ' active' : '');
-      b.textContent = (p.avatar ? p.avatar + ' ' : '') + p.name;
+      const av = p.avatar || '';
+      if (av.startsWith('/')) {
+        const img = document.createElement('img');
+        img.src = av;
+        img.alt = p.name;
+        img.style.cssText = 'width:20px;height:20px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:5px';
+        b.appendChild(img);
+        b.appendChild(document.createTextNode(p.name));
+      } else {
+        b.textContent = (av ? av + ' ' : '') + p.name;
+      }
       b.title = p.description || '';
       b.onclick = async () => {
         await fetch(API + '/persona', {
@@ -563,4 +578,5 @@ $ttsToggle.onclick = () => {
 </script>
 </body>
 </html>
+
 

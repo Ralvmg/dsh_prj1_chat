@@ -94,13 +94,14 @@ class Config:
 
     # ---------- 服务器操作（严格入口 + 会话模式）----------
     # 只有这些 QQ 号、在私聊里、且发出口令时才进入操作模式
-    ADMIN_QQ = [q.strip() for q in _env("ADMIN_QQ", "3347268346").split(",") if q.strip()]
+    # 管理员的 QQ 号通过环境变量配置，不要写死在代码里
+    ADMIN_QQ = [q.strip() for q in _env("ADMIN_QQ", "").split(",") if q.strip()]
     ADMIN_PREFIX = _env("ADMIN_PREFIX", "!!")
     OPS_ENTRY = _env("OPS_ENTRY", "/help me for linux by ra 666")
     OPS_EXIT = _env("OPS_EXIT", "/exit help")
     OPS_IDLE_SEC = _env_int("OPS_IDLE_SEC", 60)
-    AGENT_URL = _env("AGENT_URL", "http://172.18.0.1:7788")
-    AGENT_TOKEN = _env("AGENT_TOKEN", "qqagent-2026-secret")
+    AGENT_URL = _env("AGENT_URL", "")
+    AGENT_TOKEN = _env("AGENT_TOKEN", "")
     AGENT_TIMEOUT = _env_int("AGENT_TIMEOUT", 90)
 
     # ---------- 视觉（看图 / 表情包）----------

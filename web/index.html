@@ -265,8 +265,12 @@ async function loadPersonas() {
     (d.personas || []).forEach(p => {
       const el = document.createElement('div');
       el.className = 'persona-card' + (p.name === d.current ? ' active' : '');
+      const av = p.avatar || '🐋';
+      const avHtml = av.startsWith('/')
+        ? `<img src="${av}" alt="${p.name}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:8px;border:2px solid var(--border)">`
+        : `<div class="emoji">${av}</div>`;
       el.innerHTML = `
-        <div class="emoji">${p.avatar || '🐋'}</div>
+        ${avHtml}
         <div class="pname">${p.name}</div>
         <div class="pdesc">${p.description || ''}</div>
       `;

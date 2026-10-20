@@ -16,7 +16,7 @@ import sys
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-BIND_HOST = os.environ.get("QQAGENT_HOST", "172.18.0.1")
+BIND_HOST = os.environ.get("QQAGENT_HOST", "0.0.0.0")
 BIND_PORT = int(os.environ.get("QQAGENT_PORT", "7788"))
 TOKEN = os.environ.get("QQAGENT_TOKEN", "")
 LOG_PATH = os.environ.get("QQAGENT_LOG", "/var/log/qqagent.log")

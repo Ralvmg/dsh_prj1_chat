@@ -1,5 +1,10 @@
-"""测试服务器操作会话模式（不依赖 QQ，直接驱动 OpsSessionManager）"""
+"""测试服务器操作会话模式（不依赖 QQ，直接驱动 OpsSessionManager）
+
+用法：
+    ADMIN_QQ=你的QQ号 AGENT_URL=http://... AGENT_TOKEN=xxx python test_ops.py
+"""
 import asyncio
+import os
 import sys
 
 sys.path.insert(0, "/app")
@@ -7,9 +12,9 @@ sys.path.insert(0, "/app")
 from app.core.serverops import ServerOps
 from app.core.opssession import OpsSessionManager
 
-ADMIN = "3347268346"
-ENTRY = "/help me for linux by ra 666"
-EXIT = "/exit help"
+ADMIN = os.getenv("ADMIN_QQ", "10000")
+ENTRY = os.getenv("OPS_ENTRY", "/help me for linux by ra 666")
+EXIT = os.getenv("OPS_EXIT", "/exit help")
 
 
 async def main():
@@ -18,7 +23,8 @@ async def main():
     async def fake_send(uid, msg):
         sent.append(msg)
 
-    ops = ServerOps("http://172.18.0.1:7788", "qqagent-2026-secret", 30)
+    ops = ServerOps(os.getenv("AGENT_URL", "http://127.0.0.1:7788"),
+                    os.getenv("AGENT_TOKEN", ""), 30)
     ok = await ops.health()
     print("agent health:", ok)
 
