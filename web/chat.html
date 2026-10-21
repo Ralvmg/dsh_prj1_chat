@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>鲸鱼娘 · 大肥鱼</title>
+<title>闲聊</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -265,9 +265,9 @@
 
 <header>
   <a href="/" class="back-btn" title="返回首页">←</a>
-  <img class="avatar" src="/avatars/dafeiyu.png" alt="鲸鱼娘" id="topAvatar">
+  <img class="avatar" src="/avatars/dafeiyu.png" alt="头像" id="topAvatar">
   <div>
-    <div class="title" id="botName">鲸鱼娘 · 大肥鱼</div>
+    <div class="title" id="botName">大肥鱼</div>
     <div class="subtitle" id="botMood">正在连接…</div>
   </div>
   <div class="status">
@@ -426,7 +426,7 @@ async function loadHealth() {
     const d = await r.json();
     if (d.ok) {
       currentPersona = d.persona || '';
-      $botName.textContent = d.persona || '鲸鱼娘';
+      $botName.textContent = d.persona || '在线';
       $botMood.textContent = d.mood ? '心情：' + d.mood : '在线';
       setStatus(true, '在线');
       // 同步头像到当前人格
@@ -578,5 +578,6 @@ $ttsToggle.onclick = () => {
 </script>
 </body>
 </html>
+
 
 
