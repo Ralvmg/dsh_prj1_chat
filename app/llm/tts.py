@@ -23,24 +23,24 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-# ============ edge-tts 中文女声（免费） ============
+# ============ 硅基流动 CosyVoice2 女声（主方案，音质最好） ============
+SILICONFLOW_VOICES = {
+    "claire": "claire",  # 甜美少女音（默认，最接近二次元角色）
+    "anna": "anna",      # 年轻清澈
+    "bella": "bella",    # 柔和
+    "diana": "diana",    # 成熟
+}
+
+# ============ edge-tts 中文女声（免费兜底） ============
 EDGE_VOICES = {
-    "xiaoxiao": "zh-CN-XiaoxiaoNeural",       # 晓晓：甜美亲切（默认）
+    "xiaoxiao": "zh-CN-XiaoxiaoNeural",       # 晓晓：甜美亲切
     "xiaoyi": "zh-CN-XiaoyiNeural",           # 晓伊：少女音
     "xiaobei": "zh-CN-liaoning-XiaobeiNeural",# 晓北：东北腔，活泼
     "xiaohan": "zh-CN-XiaohanNeural",         # 晓涵：温柔
     "xiaomeng": "zh-CN-XiaomengNeural",       # 晓梦：可爱
     "xiaomo": "zh-CN-XiaomoNeural",           # 晓墨：知性
 }
-EDGE_DEFAULT = "xiaoyi"      # 少女音最适合鲸鱼娘
-
-# ============ 硅基流动女声（付费兜底） ============
-SILICONFLOW_VOICES = {
-    "anna": "anna",      # 年轻清澈
-    "bella": "bella",    # 柔和
-    "claire": "claire",  # 甜美
-    "diana": "diana",    # 成熟
-}
+EDGE_DEFAULT = "xiaoyi"
 
 
 class TTSEngine:
@@ -119,14 +119,14 @@ class TTSEngine:
         self._last_call = time.time()
 
         audio = None
-        if self.provider == "edge":
-            audio = await self._edge_tts(clean, voice, speed)
-            if audio is None and self.api_key:
-                # edge 失败才走付费兜底
-                logger.warning("edge-tts 失败，尝试硅基流动兜底")
-                audio = await self._siliconflow(clean, voice, speed)
-        elif self.provider == "siliconflow":
+        if self.provider == "siliconflow":
+            # 主方案：CosyVoice2（音质好），失败才退回免费 edge
             audio = await self._siliconflow(clean, voice, speed)
+            if audio is None:
+                logger.warning("硅基流动 TTS 失败，退回 edge-tts")
+                audio = await self._edge_tts(clean, voice, speed)
+        elif self.provider == "edge":
+            audio = await self._edge_tts(clean, voice, speed)
 
         if audio:
             self._put_cache(clean, audio)
@@ -177,14 +177,17 @@ class TTSEngine:
             logger.warning(f"edge-tts 异常: {e}")
             return None
 
-    # ---------- 硅基流动（付费兜底） ----------
+    # ---------- 硅基流动 CosyVoice2（主方案） ----------
 
     async def _siliconflow(self, text: str, voice: str, speed: float) -> Optional[str]:
         if not self.api_key:
             return None
-        vname = voice or "anna"
-        if ":" not in vname:
-            vname = f"{self.model}:{vname}"
+        vname = voice or "claire"
+        # 只认预置音色名（claire/anna/bella/diana），其它一律回落 claire
+        short = vname.split(":")[-1]
+        if short not in SILICONFLOW_VOICES:
+            short = "claire"
+        vname = f"{self.model}:{short}"
         payload = {
             "model": self.model,
             "input": text,

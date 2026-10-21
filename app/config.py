@@ -125,11 +125,11 @@ class Config:
     WEB_CHAT_PORT = _env_int("WEB_CHAT_PORT", 8080)
 
     # ---------- 语音合成 ----------
-    # provider: edge（免费）/ siliconflow（付费）/ off（关闭）
+    # provider: siliconflow（CosyVoice2，音质好）/ edge（免费但机械）/ off
     TTS_ENABLED = _env_bool("TTS_ENABLED", True)
-    TTS_PROVIDER = _env("TTS_PROVIDER", "edge")
+    TTS_PROVIDER = _env("TTS_PROVIDER", "siliconflow")
     TTS_MODEL = _env("TTS_MODEL", "FunAudioLLM/CosyVoice2-0.5B")
-    TTS_VOICE = _env("TTS_VOICE", "xiaoyi")       # edge: 少女音
+    TTS_VOICE = _env("TTS_VOICE", "claire")       # claire: 甜美少女音
     TTS_MIN_INTERVAL = _env_float("TTS_MIN_INTERVAL", 8.0)   # 两次合成最短间隔（秒）
     TTS_MAX_CHARS = _env_int("TTS_MAX_CHARS", 200)           # 超过多少字不合成
 
