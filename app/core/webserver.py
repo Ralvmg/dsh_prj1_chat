@@ -227,6 +227,20 @@ class WebChatServer:
             ],
         }
 
+    async def handle_clear(self, sid: str) -> int:
+        """清空会话历史（含摘要），返回删除条数
+
+        人设规则更新后，旧回复仍留在历史里会让模型照抄，
+        所以提供这个接口清掉污染。
+        """
+        sk = self.session_key(sid)
+        n = await self.memory.conversation.clear(sk)
+        try:
+            await self.memory.conversation.set_summary(sk, "")
+        except Exception:
+            pass
+        return n
+
     # ---------- HTTP ----------
 
     def make_handler(self):
@@ -308,6 +322,22 @@ class WebChatServer:
                     try:
                         r = self._run_async(srv.handle_history(sid))
                         return self._json(200, r)
+                    except Exception as e:
+                        return self._json(500, {"ok": False, "error": str(e)})
+                return self._json(404, {"ok": False, "error": "not found"})
+
+            def do_DELETE(self):
+                """清空某个会话的历史（人设更新后清理污染用）"""
+                u = urlparse(self.path)
+                if u.path == "/api/chat/history":
+                    qs = parse_qs(u.query)
+                    sid = (qs.get("session_id") or [""])[0]
+                    if not sid:
+                        return self._json(400, {"ok": False, "error": "missing session_id"})
+                    try:
+                        n = self._run_async(srv.handle_clear(sid))
+                        logger.info(f"🧹 已清空会话历史: web:{sid}（{n} 条）")
+                        return self._json(200, {"ok": True, "deleted": n})
                     except Exception as e:
                         return self._json(500, {"ok": False, "error": str(e)})
                 return self._json(404, {"ok": False, "error": "not found"})

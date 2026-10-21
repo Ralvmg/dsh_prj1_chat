@@ -275,6 +275,7 @@
     <span id="statusText">连接中</span>
   </div>
   <button class="tts-toggle on" id="ttsToggle" title="语音朗读开关">🔊</button>
+  <button class="tts-toggle" id="clearBtn" title="清空对话（重新开始）">🧹</button>
 </header>
 
 <div id="messages"></div>
@@ -565,6 +566,29 @@ $ttsToggle.onclick = () => {
   $ttsToggle.className = 'tts-toggle' + (ttsEnabled ? ' on' : '');
   $ttsToggle.textContent = ttsEnabled ? '🔊' : '🔇';
   if (!ttsEnabled && currentAudio) { currentAudio.pause(); currentAudio = null; }
+};
+
+// 清空对话（人设更新后清掉旧历史，避免模型照抄旧回复）
+const $clearBtn = document.getElementById('clearBtn');
+$clearBtn.onclick = async () => {
+  if (!confirm('清空这次对话的所有记录？\n\n（会重新开始，她不再记得刚才聊过的内容）')) return;
+  try {
+    const r = await fetch(API + '/history?session_id=' + encodeURIComponent(sessionId), {
+      method: 'DELETE',
+    });
+    const d = await r.json();
+    if (d.ok) {
+      // 换个新 session_id，彻底重开
+      sessionId = 'u' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      localStorage.setItem(SID_KEY, sessionId);
+      $messages.innerHTML = '';
+      addMessage('bot', '哼，刚才聊的都不记得了……重新开始吧。有事说事。');
+      $clearBtn.textContent = '✅';
+      setTimeout(() => { $clearBtn.textContent = '🧹'; }, 1500);
+    }
+  } catch (e) {
+    alert('清空失败，稍后再试');
+  }
 };
 
 // 初始化
